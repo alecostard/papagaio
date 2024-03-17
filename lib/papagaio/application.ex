@@ -1,6 +1,4 @@
 defmodule Papagaio.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -11,18 +9,13 @@ defmodule Papagaio.Application do
       PapagaioWeb.Telemetry,
       Papagaio.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:papagaio, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:papagaio, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:papagaio, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Papagaio.PubSub},
-      # Start a worker by calling: Papagaio.Worker.start_link(arg)
-      # {Papagaio.Worker, arg},
       # Start to serve requests, typically the last entry
       PapagaioWeb.Endpoint
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Papagaio.Supervisor]
     Supervisor.start_link(children, opts)
   end
@@ -36,7 +29,6 @@ defmodule Papagaio.Application do
   end
 
   defp skip_migrations?() do
-    # By default, sqlite migrations are run when using a release
-    System.get_env("RELEASE_NAME") != nil
+    System.get_env("SKIP_MIGRATIONS") == "true"
   end
 end

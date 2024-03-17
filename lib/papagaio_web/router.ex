@@ -18,12 +18,14 @@ defmodule PapagaioWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/inbox/:inbox_id", InboxLive
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", PapagaioWeb do
-  #   pipe_through :api
-  # end
+  scope "/", PapagaioWeb do
+    pipe_through :api
+
+    post "/inbox/:inbox_id/webhook/*webhook_path", WebhookController, :create
+  end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:papagaio, :dev_routes) do
